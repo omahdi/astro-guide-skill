@@ -1,0 +1,37 @@
+---
+/**
+ * Figure.astro — a generic figure wrapper with a small-caps label and caption.
+ *
+ * Use for non-D3 figures (images, tables, code exhibits). For D3 diagrams use
+ * D3Figure.astro instead (it wraps this same visual convention plus the render
+ * mechanism).
+ *
+ * Content (the figure body) goes in the DEFAULT slot; the caption goes in the
+ * `caption` slot.
+ *
+ * Usage:
+ *   <Figure label="Figure 1" wide>
+ *     <img src="..." alt="..." />
+ *     <span slot="caption">What the reader should take away.</span>
+ *   </Figure>
+ *
+ * Props:
+ *   label? — small-caps label (e.g. "Figure 1", "Table 2", "Exhibit A").
+ *   wide?  — span the full width (main column + right gutter).
+ *   id?    — anchor id for cross-references.
+ */
+interface Props {
+  label?: string;
+  wide?: boolean;
+  id?: string;
+}
+const { label, wide = false, id } = Astro.props;
+---
+
+<figure class:list={['distill-figure', { 'figure--wide': wide }]} id={id}>
+  {label && <div class="distill-figure__label">{label}</div>}
+  <slot />
+  <figcaption>
+    <slot name="caption" />
+  </figcaption>
+</figure>

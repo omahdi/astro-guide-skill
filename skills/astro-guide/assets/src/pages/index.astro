@@ -1,0 +1,53 @@
+---
+/**
+ * index.astro — STARTER page. Replace with your guide content.
+ *
+ * Author sections as DIRECT CHILDREN of <Base> so the distill grid places them.
+ *
+ * Add a section:   <h2 id="anchor">Title</h2> <p>...</p>
+ * Add a margin note (sparingly, max ~5 per page), right after its anchor:
+ *                  <MarginNote label="Note">A short essential aside.</MarginNote>
+ * Add a diagram:   1. create src/diagrams/<name>.ts exporting default { data, render }
+ *                  2. <D3Figure name="<name>" label="Figure N" caption="..." />
+ *
+ * CODE SNIPPETS: Astro parses `{ }` as expressions. Put every multi-line snippet
+ * in a frontmatter template-string const and interpolate it — braces stay literal:
+ *     const snippet = `interface X { ... }`;
+ *     <pre class="code"><code>{snippet}</code></pre>
+ */
+import Base from '../layouts/Base.astro';
+import MarginNote from '../components/MarginNote.astro';
+import D3Figure from '../components/D3Figure.astro';
+
+const sampleSnippet = `interface Example {
+  id: string;   // braces here stay literal because this is a JS string
+}`;
+---
+
+<Base
+  eyebrow="team · engineering guide"
+  title="Guide title"
+  subtitle="A one-line subtitle stating what this system is and its current state."
+  byline="Status / date / author."
+>
+  <p>
+    Opening abstract paragraph — lead with a non-circular topic sentence, use
+    <strong>bold</strong> for the load-bearing terms, and state the current state
+    (what exists today) up front.
+  </p>
+
+  <h2 id="overview">Overview</h2>
+  <p>Section prose. Prefer a table or a diagram over a long paragraph when enumerating.</p>
+
+  <MarginNote label="Note">
+    A genuinely essential aside — reserve margin notes for these; keep them rare.
+  </MarginNote>
+
+  <pre class="code"><code>{sampleSnippet}</code></pre>
+
+  <D3Figure
+    name="_sample"
+    label="Figure 1"
+    caption="Replace _sample with your diagram module; captions read as full sentences."
+  />
+</Base>

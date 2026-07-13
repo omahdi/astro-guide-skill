@@ -1,0 +1,74 @@
+---
+/**
+ * Base.astro — the distill-style article shell.
+ *
+ * Renders the page chrome: a header (eyebrow / title / subtitle / byline), the
+ * three-column article grid (main text + right margin gutter), and a footer.
+ *
+ * Content goes in the DEFAULT slot and lands inside `.distill-body`, which IS
+ * the grid — so every direct child you author (p, h2, figure, MarginNote, ...)
+ * is placed by the grid rules in distill.css. Author page sections as direct
+ * children of this slot.
+ *
+ * Usage (in a page):
+ *   <Base title="..." subtitle="..." eyebrow="..." byline="...">
+ *     <h2 id="overview">Overview</h2>
+ *     <p>...</p>
+ *     <MarginNote>...</MarginNote>
+ *   </Base>
+ */
+import '../styles/distill.css';
+
+interface Props {
+  title: string;
+  subtitle?: string;
+  eyebrow?: string;
+  byline?: string;
+  /** Extra description meta tag; falls back to subtitle. */
+  description?: string;
+}
+
+const {
+  title,
+  subtitle,
+  eyebrow,
+  byline,
+  description,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    {(description ?? subtitle) && (
+      <meta name="description" content={description ?? subtitle} />
+    )}
+  </head>
+  <body>
+    <article class="distill-article">
+      <header class="distill-header">
+        {eyebrow && <p class="distill-eyebrow">{eyebrow}</p>}
+        <h1 class="distill-title">{title}</h1>
+        {subtitle && <p class="distill-subtitle">{subtitle}</p>}
+        {byline && <p class="distill-byline">{byline}</p>}
+      </header>
+
+      <div class="distill-body">
+        <slot />
+      </div>
+
+      <footer class="distill-footer">
+        <slot name="footer">
+          <p>
+            Internal engineering guide · vc&nbsp;trade telemetry subsystem.
+            Diagrams rendered client-side with D3.
+          </p>
+        </slot>
+      </footer>
+    </article>
+  </body>
+</html>

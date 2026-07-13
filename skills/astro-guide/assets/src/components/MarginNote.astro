@@ -1,0 +1,28 @@
+---
+/**
+ * MarginNote.astro — a right-margin callout (distill sidenote).
+ *
+ * Place it as a DIRECT child of the Base body slot, immediately AFTER the
+ * paragraph it annotates. On wide screens it sits in the right gutter, top-
+ * aligned with that paragraph; on narrow screens it collapses inline as a
+ * small indented aside (handled entirely by distill.css).
+ *
+ * Use SPARINGLY — only for genuinely marginal, essential asides.
+ *
+ * Usage:
+ *   <p>Main point in the flow...</p>
+ *   <MarginNote label="Note">A short aside worth pulling aside.</MarginNote>
+ *
+ * Props:
+ *   label? — optional small-caps label above the note (e.g. "Note", "Aside").
+ */
+interface Props {
+  label?: string;
+}
+const { label } = Astro.props;
+---
+
+<aside class="margin-note">
+  {label && <span class="margin-note__label">{label}</span>}
+  <slot />
+</aside>

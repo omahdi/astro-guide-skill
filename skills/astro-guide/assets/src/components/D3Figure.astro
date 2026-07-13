@@ -1,0 +1,104 @@
+---
+/**
+ * D3Figure.astro — embeds a client-rendered D3 diagram.
+ *
+ * THE CONVENTION (diagram agents: read this).
+ * ------------------------------------------------------------------
+ * 1. Drop a module at `src/diagrams/<name>.ts` whose DEFAULT export is:
+ *
+ *        export default {
+ *          data,                       // the diagram's data object/array
+ *          render(container, data) {}, // draws into `container` (an HTMLElement)
+ *        };
+ *
+ *    - `render(container, data)` is called client-side once the page loads.
+ *    - `container` is the <div class="d3-figure"> inside this figure.
+ *    - Use d3 + the shared helpers in `src/diagrams/grid.ts` for consistent,
+ *      grid-based layout, palette, and node/edge drawing.
+ *
+ * 2. Reference it from a page:
+ *
+ *        <D3Figure name="_sample" label="Figure 1" caption="..." />
+ *
+ *    `name` MUST match the filename under src/diagrams/ (without `.ts`).
+ *
+ * How the import works
+ * --------------------
+ * Astro/Vite cannot dynamically import an arbitrary runtime string, so we build
+ * a static import map with `import.meta.glob` over `src/diagrams/*.ts`. At
+ * runtime we look up the module by `name`, then call its default `render`.
+ * This keeps diagram modules fully tree-shakeable and type-checked while still
+ * letting pages pick a diagram by name.
+ *
+ * Props
+ * -----
+ *   name     — diagram module filename under src/diagrams/ (no extension). Required.
+ *   label?   — small-caps figure label (e.g. "Figure 1").
+ *   caption? — caption text (string). For rich captions use the `caption` slot.
+ *   wide?    — span main column + right gutter (default true for diagrams).
+ *   id?      — DOM id for the render container; defaults to `d3-<name>`.
+ */
+interface Props {
+  name: string;
+  label?: string;
+  caption?: string;
+  wide?: boolean;
+  id?: string;
+}
+
+const { name, label, caption, wide = true, id } = Astro.props;
+const containerId = id ?? `d3-${name}`;
+---
+
+<figure class:list={['distill-figure', 'd3-figure-wrap', { 'figure--wide': wide }]}>
+  {label && <div class="distill-figure__label">{label}</div>}
+  <div id={containerId} class="d3-figure" data-diagram={name}></div>
+  <figcaption>
+    <slot name="caption">{caption}</slot>
+  </figcaption>
+</figure>
+
+<script>
+  // Static import map of every diagram module. Vite resolves this glob at build
+  // time; the object keys are the file paths, values are lazy import() thunks.
+  const modules = import.meta.glob('../diagrams/*.ts');
+
+  type DiagramModule = {
+    default: {
+      data: unknown;
+      render: (container: HTMLElement, data: unknown) => void;
+    };
+  };
+
+  async function mount(el: HTMLElement) {
+    const name = el.dataset.diagram;
+    if (!name) return;
+    const key = `../diagrams/${name}.ts`;
+    const loader = modules[key];
+    if (!loader) {
+      // Fail loudly-but-locally so a missing/renamed diagram is obvious.
+      el.innerHTML =
+        `<p style="font:13px system-ui;color:#b1361e">` +
+        `Diagram module not found: src/diagrams/${name}.ts</p>`;
+      // eslint-disable-next-line no-console
+      console.error(`[D3Figure] no diagram module for name="${name}"`);
+      return;
+    }
+    try {
+      const mod = (await loader()) as DiagramModule;
+      const diagram = mod.default;
+      diagram.render(el, diagram.data);
+    } catch (err) {
+      el.innerHTML =
+        `<p style="font:13px system-ui;color:#b1361e">` +
+        `Diagram "${name}" failed to render (see console).</p>`;
+      // eslint-disable-next-line no-console
+      console.error(`[D3Figure] render failed for "${name}"`, err);
+    }
+  }
+
+  // Mount every D3 figure on the page.
+  for (const el of document.querySelectorAll<HTMLElement>('.d3-figure[data-diagram]')) {
+    mount(el);
+  }
+</script>

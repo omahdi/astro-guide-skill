@@ -1,0 +1,14 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "allowJs": true,
+    // Diagram modules are plain TS imported by client scripts; DOM lib needed.
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler"
+  },
+  "include": ["src/**/*", "*.mjs", ".astro/types.d.ts"],
+  "exclude": ["dist", "node_modules"]
+}

@@ -1,0 +1,11 @@
+# Astro / bun build artifacts
+node_modules/
+dist/
+.astro/
+
+# bun
+bun.lock
+bun.lockb
+
+# Editor / OS
+.DS_Store

@@ -1,0 +1,22 @@
+{
+  "name": "guide",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A distill.pub-inspired Astro guide with D3.js grid diagrams.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "astro": "^5.14.1",
+    "d3": "^7.9.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@types/d3": "^7.4.3",
+    "typescript": "^5.9.2"
+  }
+}

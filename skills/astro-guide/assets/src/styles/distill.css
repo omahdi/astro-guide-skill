@@ -1,0 +1,607 @@
+/*
+ * distill.css — a small distill.pub-inspired design system.
+ *
+ * Goals: clean serif body text on a generous measure (~680px), a right-margin
+ * gutter for sidenotes/figures, thin hairline rules, a restrained near-black /
+ * off-white palette with ONE muted accent, small-caps figure labels, and
+ * subtle code styling. Responsive: the margin gutter collapses inline on
+ * narrow screens. Deliberately under-decorated — let the typography carry it.
+ *
+ * Layout model
+ * ------------
+ * The article body is a CSS grid with three columns:
+ *   [left gutter] [main text ~680px] [right margin gutter ~220px]
+ * On narrow viewports it collapses to a single column and margin notes flow
+ * inline as indented, small asides.
+ */
+
+:root {
+  /* Palette — near-black text on warm off-white, one restrained accent. */
+  --c-bg: #fdfdfb;
+  --c-surface: #f6f6f2;
+  --c-text: #1a1a1a;
+  --c-text-muted: #6b6b6b;
+  --c-text-faint: #9a9a94;
+  --c-rule: #e2e2dc;
+  --c-rule-strong: #cfcfc8;
+  --c-accent: #b1361e; /* muted brick red — used sparingly */
+  --c-accent-soft: #f2e3df;
+  --c-code-bg: #f4f4ef;
+  --c-code-text: #2a2a2a;
+
+  /* Type. Serif body (Georgia stack); sans for labels/headings accents. */
+  --font-serif: "Source Serif 4", "Iowan Old Style", "Palatino Linotype",
+    Palatino, Georgia, "Times New Roman", serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-mono: "SF Mono", "JetBrains Mono", "Fira Code", ui-monospace,
+    "Cascadia Code", Menlo, Consolas, monospace;
+
+  /* Measure + rhythm. */
+  --measure: 680px;
+  --gutter: 240px;
+  --gutter-gap: 32px;
+  --line: 1.7;
+  --page-pad: 24px;
+}
+
+/* ---------- reset-ish ---------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-family: var(--font-serif);
+  font-size: 19px;
+  line-height: var(--line);
+  font-feature-settings: "kern" 1, "liga" 1, "onum" 1; /* oldstyle numerals */
+}
+
+/* ---------- article shell / grid ---------- */
+
+.distill-article {
+  --content-width: calc(var(--measure) + var(--gutter-gap) + var(--gutter));
+  max-width: calc(var(--content-width) + 2 * var(--page-pad));
+  margin: 0 auto;
+  padding: 0 var(--page-pad);
+}
+
+/* Header sits on the same measure as the body but is allowed to breathe. */
+.distill-header {
+  max-width: var(--measure);
+  padding: 72px 0 28px;
+  border-bottom: 1px solid var(--c-rule);
+  margin-bottom: 40px;
+}
+
+.distill-eyebrow {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-accent);
+  margin: 0 0 14px;
+  font-weight: 600;
+}
+
+.distill-title {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 40px;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 0 0 12px;
+}
+
+.distill-subtitle {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 21px;
+  line-height: 1.4;
+  color: var(--c-text-muted);
+  margin: 0;
+}
+
+.distill-byline {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--c-text-faint);
+  margin-top: 20px;
+}
+
+/*
+ * .distill-body is the grid. Direct children (p, h2, ul, figure, ...) land in
+ * the MAIN column. A margin note is a child that gets pushed into the right
+ * gutter column via .margin-note.
+ */
+.distill-body {
+  display: grid;
+  grid-template-columns: [main-start] minmax(0, var(--measure)) [main-end gutter-start] var(--gutter) [gutter-end];
+  column-gap: var(--gutter-gap);
+  align-items: start;
+}
+
+/* Everything defaults into the main column. */
+.distill-body > * {
+  grid-column: main-start / main-end;
+  min-width: 0;
+}
+
+/* ---------- prose ---------- */
+
+.distill-body > p,
+.distill-body > ul,
+.distill-body > ol,
+.distill-body > blockquote {
+  margin: 0 0 1.15em;
+}
+
+.distill-body > h2 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--c-text);
+  margin: 2.4em 0 0.9em;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid var(--c-rule);
+}
+
+.distill-body > h3 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 1.25;
+  margin: 1.8em 0 0.5em;
+}
+
+.distill-body > h4 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  color: var(--c-text-muted);
+  margin: 1.6em 0 0.4em;
+}
+
+.distill-body a {
+  color: var(--c-text);
+  text-decoration: none;
+  border-bottom: 1px solid var(--c-rule-strong);
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.distill-body a:hover {
+  color: var(--c-accent);
+  border-bottom-color: var(--c-accent);
+}
+
+.distill-body ul,
+.distill-body ol {
+  padding-left: 1.3em;
+}
+
+.distill-body li {
+  margin: 0.3em 0;
+}
+
+.distill-body blockquote {
+  border-left: 2px solid var(--c-rule-strong);
+  padding-left: 1.1em;
+  color: var(--c-text-muted);
+  font-style: italic;
+}
+
+.distill-body strong {
+  font-weight: 600;
+}
+
+/* A thin hairline separator authors can drop between sections. */
+.distill-body > hr {
+  grid-column: main-start / main-end;
+  border: none;
+  border-top: 1px solid var(--c-rule);
+  margin: 2.6em 0;
+}
+
+/* ---------- inline + block code ---------- */
+
+code,
+kbd {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+}
+
+.distill-body :not(pre) > code {
+  background: var(--c-code-bg);
+  color: var(--c-code-text);
+  padding: 0.12em 0.38em;
+  border-radius: 3px;
+  border: 1px solid var(--c-rule);
+}
+
+.distill-body > pre,
+.distill-body pre {
+  background: var(--c-code-bg);
+  border: 1px solid var(--c-rule);
+  border-radius: 6px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  line-height: 1.55;
+  font-size: 14px;
+  margin: 1.4em 0;
+}
+
+.distill-body pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+/* ---------- margin notes (sidenotes) ---------- */
+
+/*
+ * A margin note lives in the right gutter, top-aligned with the paragraph it
+ * follows in source order. Small sans type, muted, with a thin lead rule.
+ */
+.margin-note {
+  grid-column: gutter-start / gutter-end;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--c-text-muted);
+  /* Nudge up so the note aligns with the paragraph's first line. */
+  margin-top: 0.25em;
+  padding-top: 0.35em;
+  border-top: 1px solid var(--c-rule-strong);
+}
+
+.margin-note .margin-note__label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-accent);
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.margin-note a {
+  color: var(--c-text-muted);
+  border-bottom: 1px solid var(--c-rule-strong);
+}
+.margin-note a:hover {
+  color: var(--c-accent);
+  border-bottom-color: var(--c-accent);
+}
+
+/* ---------- figures ---------- */
+
+figure.distill-figure {
+  margin: 2em 0;
+}
+
+/* A figure may opt into spanning the full width (main + gutter). */
+figure.distill-figure.figure--wide {
+  grid-column: main-start / gutter-end;
+}
+
+.distill-figure__label {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-accent);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.distill-figure figcaption {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--c-text-muted);
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--c-rule);
+}
+
+.distill-figure figcaption .fignum {
+  color: var(--c-text);
+  font-weight: 600;
+}
+
+/* ---------- D3 figure container ---------- */
+
+.d3-figure {
+  width: 100%;
+  overflow: visible;
+}
+
+.d3-figure svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Shared D3 typographic classes (diagram modules reference these). */
+.d3-figure text {
+  font-family: var(--font-sans);
+  fill: var(--c-text);
+}
+
+.d3-figure .d3-label {
+  font-size: 12px;
+}
+
+.d3-figure .d3-caption-label {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  fill: var(--c-text-muted);
+}
+
+/* ---------- interactive figures (controls, linked tables, fig-refs) ---------- */
+
+/*
+ * State-stepper controls live ABOVE the svg, inside the .d3-figure container.
+ * Real <button>s (also the Playwright hook). Exactly one is aria-pressed.
+ * See reference/INTERACTIVE.md and src/diagrams/interactive.ts.
+ */
+.d3-figure .fig-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 14px;
+}
+
+.fig-control {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  color: var(--c-text-muted);
+  background: var(--c-bg);
+  border: 1px solid var(--c-rule-strong);
+  border-radius: 5px;
+  padding: 7px 12px;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.fig-control:hover {
+  color: var(--c-text);
+  border-color: var(--c-text-muted);
+}
+
+.fig-control[aria-pressed="true"] {
+  color: #fff;
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+  font-weight: 600;
+}
+
+.fig-control:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+}
+
+/*
+ * Linked table below the svg. Reuses the base .distill-body table styles; adds a
+ * right-aligned numeric column and the .is-hot row highlight toggled two ways
+ * (diagram → row, and hovering a row → diagram) by linkRows().
+ */
+.d3-figure .fig-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0 0;
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+.d3-figure .fig-table thead th {
+  text-align: left;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--c-text-muted);
+  border-bottom: 1.5px solid var(--c-rule-strong);
+  padding: 6px 12px 7px 0;
+  vertical-align: bottom;
+}
+
+.d3-figure .fig-table tbody td {
+  padding: 7px 12px 7px 0;
+  border-bottom: 1px solid var(--c-rule);
+  vertical-align: top;
+}
+
+.d3-figure .fig-table td.num,
+.d3-figure .fig-table th.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  /* Interior numeric columns need a gap before the next (left-aligned,
+     zero-left-padding) column; only a trailing numeric column sits flush. */
+  padding-right: 28px;
+}
+.d3-figure .fig-table td.num:last-child,
+.d3-figure .fig-table th.num:last-child {
+  padding-right: 0;
+}
+
+.d3-figure .fig-table tbody tr {
+  cursor: default;
+  transition: background 0.15s ease;
+}
+
+/* Row highlight — toggled by the diagram and by hovering the row. */
+.d3-figure .fig-table tbody tr.is-hot {
+  background: var(--c-accent-soft);
+}
+
+/* svg marks flagged .is-hot by the two-way link get an accent outline. */
+.d3-figure svg .is-hot {
+  stroke: var(--c-accent);
+  stroke-width: 2;
+}
+
+/*
+ * .fig-ref — an inline prose term colour-linked to a figure element. Use 2–4 per
+ * chapter, only for load-bearing terms. One semantic hue per concept; the hue
+ * MUST match the figure element. Rendered as a coloured underline swatch.
+ */
+.fig-ref {
+  border-bottom: 2px solid var(--c-rule-strong);
+  padding-bottom: 1px;
+  white-space: nowrap;
+}
+.fig-ref--unadjusted {
+  border-bottom-color: var(--c-text-muted);
+}
+.fig-ref--adjusted,
+.fig-ref--accent {
+  border-bottom-color: var(--c-accent);
+}
+.fig-ref--error {
+  border-bottom-color: var(--c-accent);
+  color: var(--c-accent);
+}
+.fig-ref--fix {
+  border-bottom-color: var(--c-accent);
+  background: var(--c-accent-soft);
+}
+
+/* ---------- footer ---------- */
+
+.distill-footer {
+  max-width: var(--measure);
+  margin: 72px 0 96px;
+  padding-top: 20px;
+  border-top: 1px solid var(--c-rule);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--c-text-faint);
+}
+
+.distill-footer a {
+  color: var(--c-text-muted);
+  border-bottom: 1px solid var(--c-rule);
+  text-decoration: none;
+}
+
+/* ---------- tables + inline enum/status tokens ---------- */
+
+/*
+ * Plain <table> for enumerations (field/type/notes, status matrices, op
+ * indexes). Lands in the main column by default; wrap a wide table in
+ * <Figure wide> to span main + gutter. Sans type, hairline row rules.
+ */
+.distill-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+  font-family: var(--font-sans);
+  font-size: 14.5px;
+  line-height: 1.45;
+}
+
+.distill-body thead th {
+  text-align: left;
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--c-text-muted);
+  border-bottom: 1.5px solid var(--c-rule-strong);
+  padding: 6px 14px 8px 0;
+  vertical-align: bottom;
+}
+
+.distill-body tbody td {
+  padding: 8px 14px 8px 0;
+  border-bottom: 1px solid var(--c-rule);
+  vertical-align: top;
+}
+
+.distill-body tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.distill-body table code {
+  font-size: 0.86em;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--c-code-text);
+}
+
+/* A small-caps enum / status token, for inline use and in tables (e.g. an enum
+ * value or an HTTP status). Monospace, accent-coloured, terse. */
+.tok {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  letter-spacing: 0.02em;
+  color: var(--c-accent);
+}
+
+/* ---------- responsive: collapse the gutter ---------- */
+
+@media (max-width: 1080px) {
+  :root {
+    --gutter: 200px;
+  }
+}
+
+/*
+ * Below the breakpoint the grid becomes a single column. Margin notes flow
+ * inline as small indented asides directly after their anchor paragraph.
+ */
+@media (max-width: 860px) {
+  body {
+    font-size: 18px;
+  }
+
+  .distill-body {
+    display: block;
+  }
+
+  .distill-header {
+    padding-top: 48px;
+  }
+
+  .distill-title {
+    font-size: 32px;
+  }
+
+  .margin-note {
+    margin: 0.8em 0 1.4em;
+    padding: 0.8em 0 0 1em;
+    border-top: none;
+    border-left: 2px solid var(--c-accent-soft);
+    max-width: var(--measure);
+  }
+
+  figure.distill-figure.figure--wide {
+    /* No grid to span; already full block width. */
+    width: 100%;
+  }
+}
